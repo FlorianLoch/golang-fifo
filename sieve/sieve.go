@@ -114,7 +114,7 @@ func (s *Sieve[K, V]) Set(key K, value V) {
 	}
 
 	if s.ll.Len() >= s.size {
-		s.evict()
+		s.Evict()
 	}
 
 	e := &entry[K, V]{
@@ -225,7 +225,11 @@ func (s *Sieve[K, V]) removeEntry(e *entry[K, V], reason types.EvictReason) {
 	delete(s.items, e.key)
 }
 
-func (s *Sieve[K, V]) evict() {
+func (s *Sieve[K, V]) Evict() {
+	if s.ll.Len() == 0 {
+		return
+	}
+
 	o := s.hand
 	// if o is nil, then assign it to the tail element in the list
 	if o == nil {
